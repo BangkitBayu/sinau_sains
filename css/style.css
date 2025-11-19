@@ -13,3 +13,7 @@ html {
 .width-30ch {
   width: 30ch !important;
 }
+
+.underline-hover:hover {
+    text-decoration: underline !important;
+}
