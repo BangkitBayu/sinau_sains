@@ -1,5 +1,14 @@
 let ekChart;
 
+function resetUI() {
+  if (ekChart) ekChart.destroy();
+  calculate.textContent = "";
+
+  const input = document.querySelectorAll("input");
+
+  input.forEach((i) => (i.value = ""));
+}
+
 document.getElementById("year").textContent = new Date().getFullYear();
 
 function generateChart() {
@@ -8,9 +17,12 @@ function generateChart() {
 
   const Ek = 0.5 * weight * speed ** 2;
 
-  const ctx = document.getElementById("ekChart").getContext("2d");
+  const latex = `\\[ Ep = \\frac{1}{2} \\times ${weight} \\times ${speed}^2 = ${Ek} J\\]`;
 
-  if (ekChart) ekChart.destroy();
+  calculate.textContent = latex;
+
+  MathJax.typesetPromise();
+  const ctx = document.getElementById("ekChart").getContext("2d");
 
   ekChart = new Chart(ctx, {
     type: "bar",
