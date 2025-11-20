@@ -17,3 +17,8 @@ html {
 .underline-hover:hover {
     text-decoration: underline !important;
 }
+
+
+.text-justify {
+    text-align: justify !important;
+}

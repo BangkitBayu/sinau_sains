@@ -1,5 +1,7 @@
 let epChart; // menampung instance chart
 
+document.getElementById("year").textContent = new Date().getFullYear();
+
 function generateChart() {
   const m = parseFloat(document.getElementById("weight").value);
   const g = parseFloat(document.getElementById("gravity").value);

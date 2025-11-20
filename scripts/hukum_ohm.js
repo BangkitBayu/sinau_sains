@@ -1,5 +1,7 @@
 let ohmChart;
 
+document.getElementById("year").textContent = new Date().getFullYear();
+
 const selected = document.getElementById("rumus-dicari");
 const arusContainer = document.getElementById("arus-container");
 const besarTeganganContainer = document.getElementById(
