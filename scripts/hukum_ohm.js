@@ -86,14 +86,16 @@ function generateChart(value, opt) {
     },
     options: {
       scales: {
+        indexAxis: "y",
+        responsive : true,
         x: {
-          display: true,
           text: opt.xLabel,
+          display: true,
           beginAtZero: true,
         },
         y: {
+          text: `${opt.yLabel}`,
           display: true,
-          text: opt.yLabel,
           beginAtZero: true,
         },
       },
