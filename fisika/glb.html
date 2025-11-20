@@ -34,26 +34,23 @@
                     <h3>Rumus</h3>
                     <h2>\[ V = \frac{s}{t} \]
                     </h2>
-                    <p>\[ V = kecepatan (m/s) \]
+                    <p>\[ V = \text{kecepatan (m/s)} \]
                     </p>
-                    <p>\[ s = jarak tempuh (m) \]
+                    <p>\[ s = \text{jarak tempuh (m)} \]
                     </p>
-                    <p>\[ t = waktu tempuh (s) \]
+                    <p>\[ t = \text{waktu tempuh (s)} \]
                     </p>
                     <hr>
                     <p id="calculate"></p>
                 </div>
                 <div class="container-fluid mt-3 rounded-3 border border-2 p-3">
                     <div class="input-group mb-3">
-                        <input id="distance" type="number" class="form-control"
-                            placeholder="Masukkan jarak tempuh benda" aria-label="jarak tempuh benda"
-                            aria-describedby="basic-addon2" required>
-                        <span class="input-group-text" id="basic-addon2">m</span>
+                        <p>Jarak Tempuh: <span id="distance-value">100</span> m</p>
+                        <input id="distance" type="range" class="form-range" max="1000" value="100" step="1">
                     </div>
                     <div class="input-group mb-3">
-                        <input id="time" type="number" class="form-control" placeholder="Masukkan waktu tempuh benda"
-                            aria-label="waktu tempuh benda" aria-describedby="basic-addon3" required>
-                        <span class="input-group-text" id="basic-addon3">s</span>
+                        <p>Waktu Tempuh: <span id="time-value">100</span> s</p>
+                        <input id="time" type="range" class="form-range" max="1000" value="100" step="5">
                     </div>
                     <div class="d-flex gap-2">
                         <button class="btn btn-primary" onclick="generateChart()"

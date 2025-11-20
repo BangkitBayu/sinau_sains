@@ -5,14 +5,29 @@ function resetUI() {
   calculate.textContent = "";
 
   const input = document.querySelectorAll("input");
+  const span = document.querySelectorAll("span")
 
-  input.forEach((i) => (i.value = ""));
+  input.forEach((i) => (i.value = "100"));
+  span.forEach((s) => (s.textContent = "100"));
 }
 document.getElementById("year").textContent = new Date().getFullYear();
+
+const s = document.getElementById("distance")
+const t = document.getElementById("time")
+
+s.addEventListener("input" , () => {
+  document.getElementById("distance-value").textContent = s.value;
+})
+
+t.addEventListener("input" , () => {
+  document.getElementById("time-value").textContent = t.value;
+})
 
 function generateChart() {
   const s = parseFloat(document.getElementById("distance").value);
   const t = parseFloat(document.getElementById("time").value);
+ if (glbChart) glbChart.destroy();
+
   const calculate = document.getElementById("calculate");
   const Glb = s / t;
 
