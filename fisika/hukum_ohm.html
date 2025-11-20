@@ -7,6 +7,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="css/style.css">
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
     <title>Hukum Ohm</title>
 </head>
 
@@ -16,33 +23,83 @@
             <div class="container-fluid mt-4 p-3">
                 <a href="../mapel/fisika.html" class="text-decoration-none text-dark underline-hover">&lt;&lt;
                     Kembali</a>
-                <h3 class="h3 mt-4 text-center">Hukum Ohm</h3>
-
-                <div class="container-fluid mt-3 d-flex flex-column align-items-center gap-2">
+                <div class="container">
+                    <h3 class="h3 mt-4 text-center">Hukum Ohm</h3>
+                    <p class="text-desc text-center">Hukum Ohm adalah hukum fisika yang menyatakan hubungan antara
+                        tegangan listrik, arus listrik, dan hambatan listrik, di mana arus berbanding lurus dengan
+                        tegangan dan berbanding terbalik dengan hambatan, asalkan suhu dan kondisi fisik lainnya konstan
+                    </p>
+                </div>
+                <div id="rumusContainer" class="container-fluid mt-3 rounded-3 border border-2 p-3 d-none">
+                    <h3>Rumus</h3>
+                    <div id="arusRumus" class="d-none">
+                        <h2>\[ I = \frac{V}{R} \]
+                        </h2>
+                        <p>\[ I = Arus Listrik (A) \]
+                        </p>
+                        <p>\[ V = Tegangan (Volt) \]
+                        </p>
+                        <p>\[ R = Hambatan (Ω) \]
+                        </p>
+                        <hr>
+                        <p id="calculate"></p>
+                    </div>
+                    <div id="teganganRumus" class="d-none">
+                        <h2>\[ V = I \times R \]
+                        </h2>
+                        <p>\[ V = Tegangan (Volt) \]
+                        <p>\[ I = Arus Listrik (A) \]
+                        </p>
+                        </p>
+                        <p>\[ R = Hambatan (Ω) \]
+                        </p>
+                        <hr>
+                        <p id="calculate2"></p>
+                    </div>
+                    <div id="hambatanRumus" class="d-none">
+                        <h2>\[ R = \frac{V}{I} \]
+                        </h2>
+                        <p>\[ R = Hambatan (Ω) \]
+                        </p>
+                        <p>\[ V = Tegangan (Volt) \]
+                        <p>\[ I = Arus Listrik (A) \]
+                        </p>
+                        </p>
+                        <hr>
+                        <p id="calculate3"></p>
+                    </div>
+                </div>
+                <div
+                    class="container-fluid mt-3 rounded-3 border border-2 p-3">
                     <select class="form-select form-select-sm" aria-label="Small select example" id="rumus-dicari">
                         <option selected>Apa yang ingin kamu cari</option>
                         <option value="I">Arus (I)</option>
                         <option value="V">Tegangan (V)</option>
                         <option value="R">Hambatan (R)</option>
                     </select>
-                    <div class="input-group mb-3 d-none" id="arus-container">
+                    <div class="input-group mb-3 d-none mt-3" id="arus-container">
                         <input id="i" type="number" class="form-control" placeholder="Masukkan besar arus listrik"
                             aria-label="besar arus listrik" aria-describedby="basic-addon2">
                         <span class="input-group-text" id="basic-addon2">A</span>
                     </div>
-                    <div class="input-group mb-3 d-none"  id="besar-tegangan-container">
+                    <div class="input-group mb-3 d-none mt-3" id="besar-tegangan-container">
                         <input id="v" type="number" class="form-control" placeholder="Masukkan besar tegangan"
                             aria-label="besar tegangan" aria-describedby="basic-addon3">
                         <span class="input-group-text" id="basic-addon3">V</span>
                     </div>
-                    <div class="input-group mb-3 d-none"  id="hambatan-container">
+                    <div class="input-group mb-3 d-none mt-3" id="hambatan-container">
                         <input id="r" type="number" class="form-control" placeholder="Masukkan besar hambatan"
                             aria-label="besar hambatan" aria-describedby="basic-addon4">
                         <span class="input-group-text" id="basic-addon4">Ω</span>
                     </div>
-                    <button class="btn btn-primary"
-                        style="max-width: 25rem; width:100%;" id="tampilkan-grafik">Tampilkan
-                        Grafik</button>
+
+                    <div class="d-flex gap-2 mt-2">
+                        <button id="tampilkan-grafik" class="btn btn-primary"
+                            style="max-width: 100rem; width:100%;">Tampilkan
+                            Grafik</button>
+                        <button class="btn btn-danger" onclick="resetUI()"
+                            style="max-width: 50rem; width:100%;">Reset</button>
+                    </div>
                 </div>
 
                 <div class="container mt-4">
