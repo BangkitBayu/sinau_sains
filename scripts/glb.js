@@ -1,5 +1,7 @@
 let glbChart;
 
+document.getElementById("year").textContent = new Date().getFullYear();
+
 function generateChart() {
   const d = parseFloat(document.getElementById("distance").value);
   const t = parseFloat(document.getElementById("time").value);
