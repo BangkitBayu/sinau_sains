@@ -12,8 +12,10 @@
 
 <body>
     <header>
-        <div class="container-fluid py-3 px-4 shadow-sm sticky-top">
+        <div class="container-fluid py-3 px-4 shadow-sm sticky-top d-flex justify-content-between">
             <h1 class="h2 text-primary">SinauSains</h1>
+
+            <button class="btn btn-primary" id="logout">Logout</button>
         </div>
     </header>
     <main>
@@ -74,6 +76,11 @@
                 window.location.href = "index.html"
             }
 
+        })
+
+        $("#logout").click(() => {
+            localStorage.clear()
+            return location.href = "index.html"
         })
         let date = new Date().getFullYear();
         $("#year").text(date);
