@@ -5,7 +5,7 @@ document.getElementById("year").textContent = new Date().getFullYear();
 function resetUI() {
   if (ohmChart) ohmChart.destroy();
   calculate.textContent = "";
-  calculate2.textContent = ""
+  calculate2.textContent = "";
 
   const input = document.querySelectorAll("input");
 
@@ -36,7 +36,7 @@ selected.addEventListener("change", () => {
     arusContainer.classList.remove("d-none");
     besarTeganganContainer.classList.add("d-none");
     hambatanContainer.classList.remove("d-none");
-    
+
     document.getElementById("rumusContainer").classList.remove("d-none");
     document.getElementById("arusRumus").classList.add("d-none");
     document.getElementById("hambatanRumus").classList.add("d-none");
@@ -45,7 +45,7 @@ selected.addEventListener("change", () => {
     besarTeganganContainer.classList.remove("d-none");
     hambatanContainer.classList.add("d-none");
     arusContainer.classList.remove("d-none");
-    
+
     document.getElementById("rumusContainer").classList.remove("d-none");
     document.getElementById("arusRumus").classList.add("d-none");
     document.getElementById("hambatanRumus").classList.remove("d-none");
@@ -96,7 +96,7 @@ function hitung() {
     calculate2.textContent = latex;
 
     MathJax.typesetPromise();
-    
+
     generateChart(result, createOpt(title, xLabel, yLabel));
   } else if (value === "R") {
     let I = parseFloat(document.getElementById("i").value);
@@ -105,9 +105,9 @@ function hitung() {
     let title = "Hambatan Ohm";
     let xLabel = "Arus (I)";
     let yLabel = "Tegangan (V)";
-    
+
     const latex = `\\[ R = \\frac{${V}}{${I}} = ${result} A\\]`;
-    
+
     calculate3.textContent = latex;
     MathJax.typesetPromise();
 
