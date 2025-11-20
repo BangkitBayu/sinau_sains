@@ -16,7 +16,7 @@ function generateChart() {
   const calculate = document.getElementById("calculate");
   const Glb = s / t;
 
-  const latex = `\\[ v = \\frac{${s}}{${t}} = ${Glb}\\]`;
+  const latex = `\\[ V = \\frac{${s}}{${t}} = ${Glb} m/s\\]`;
 
   calculate.textContent = latex;
 

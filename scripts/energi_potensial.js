@@ -1,5 +1,14 @@
 let epChart; // menampung instance chart
 
+function resetUI() {
+  if (epChart) epChart.destroy();
+  calculate.textContent = "";
+
+  const input = document.querySelectorAll("input");
+
+  input.forEach((i) => (i.value = ""));
+}
+
 document.getElementById("year").textContent = new Date().getFullYear();
 
 function generateChart() {
@@ -9,10 +18,13 @@ function generateChart() {
 
   const Ep = m * g * h;
 
-  const ctx = document.getElementById("epChart").getContext("2d");
+  const latex = `\\[ Ep = ${m} \\times ${g} \\times ${h} = ${Ep} J\\]`;
 
-  // jika chart sudah ada, hapus dulu supaya tidak double
-  if (epChart) epChart.destroy();
+  calculate.textContent = latex;
+
+  MathJax.typesetPromise();
+
+  const ctx = document.getElementById("epChart").getContext("2d");
 
   epChart = new Chart(ctx, {
     type: "bar",
@@ -34,5 +46,3 @@ function generateChart() {
     },
   });
 }
-
-

@@ -7,6 +7,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="css/style.css">
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
     <title>Energi Potensial</title>
 </head>
 
@@ -14,11 +21,32 @@
     <main>
         <div class="min-vh-100">
             <div class="container-fluid mt-4 p-3">
+
                 <a href="../mapel/fisika.html" class="text-decoration-none text-dark underline-hover">&lt;&lt;
                     Kembali</a>
-                <h3 class="h3 mt-4 text-center">Energi Potensial</h3>
 
-                <div class="container-fluid mt-3">
+                <div class="container">
+                    <h3 class="h3 mt-4 text-center">Energi Potensial</h3>
+                    <p class="text-desc text-center">Energi potensial adalah energi yang tersimpan dalam suatu benda
+                        karena posisi, susunan, atau
+                        keadaannya yang bisa melakukan kerja</p>
+                </div>
+                <div class="container-fluid mt-3 rounded-3 border border-2 p-3">
+                    <h3>Rumus</h3>
+                    <h2>\[ Ep = m \times g \times h \]
+                    </h2>
+                    <p>\[ Ep = Energi Potensial (J) \]
+                    </p>
+                    <p>\[ m = Massa (kg) \]
+                    </p>
+                    <p>\[ g = Gravitasi (m/s²) \]
+                    </p>
+                    <p>\[ h = Ketinggian (m) \]
+                    </p>
+                    <hr>
+                    <p id="calculate"></p>
+                </div>
+                <div class="container-fluid mt-3 rounded-3 border border-2 p-3">
                     <div class="input-group mb-3">
                         <input id="weight" type="text" class="form-control" placeholder="Masukkan massa benda"
                             aria-label="Recipient’s username" aria-describedby="basic-addon2">
@@ -35,8 +63,13 @@
                         <span class="input-group-text" id="basic-addon4">m</span>
                     </div>
 
-                    <button class="btn btn-primary" onclick="generateChart()" style="max-width: 25rem; width:100%;">Tampilkan
-                        Grafik</button>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" onclick="generateChart()"
+                            style="max-width: 50rem; width:100%;">Tampilkan
+                            Grafik</button>
+                        <button class="btn btn-danger" onclick="resetUI()"
+                            style="max-width: 50rem; width:100%;">Reset</button>
+                    </div>
                 </div>
 
                 <div class="container mt-4">
