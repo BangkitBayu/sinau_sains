@@ -1,16 +1,28 @@
 let glbChart;
 
+function resetUI() {
+  if (glbChart) glbChart.destroy();
+  calculate.textContent = "";
+
+  const input = document.querySelectorAll("input");
+
+  input.forEach((i) => (i.value = ""));
+}
 document.getElementById("year").textContent = new Date().getFullYear();
 
 function generateChart() {
-  const d = parseFloat(document.getElementById("distance").value);
+  const s = parseFloat(document.getElementById("distance").value);
   const t = parseFloat(document.getElementById("time").value);
+  const calculate = document.getElementById("calculate");
+  const Glb = s / t;
 
-  const Glb = d / t;
+  const latex = `\\[ v = \\frac{${s}}{${t}} = ${Glb}\\]`;
+
+  calculate.textContent = latex;
+
+  MathJax.typesetPromise();
 
   const ctx = document.getElementById("glbChart").getContext("2d");
-
-  if (glbChart) glbChart.destroy();
 
   glbChart = new Chart(ctx, {
     type: "bar",
