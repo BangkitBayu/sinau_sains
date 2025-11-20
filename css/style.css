@@ -3,7 +3,7 @@
 
 html {
     font-family: 'Ubuntu', sans-serif !important;
-    overflow: hidden;
+    overflow-x: hidden;
 }
 
 .img-brightness {

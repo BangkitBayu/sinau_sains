@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Hukum Ohm</title>
+</head>
+
+<body>
+    <main>
+        <div class="min-vh-100">
+            <div class="container-fluid mt-4 p-3">
+                <a href="../mapel/fisika.html" class="text-decoration-none text-dark underline-hover">&lt;&lt;
+                    Kembali</a>
+                <h3 class="h3 mt-4 text-center">Hukum Ohm</h3>
+
+                <div class="container-fluid mt-3 d-flex flex-column align-items-center gap-2">
+                    <select class="form-select form-select-sm" aria-label="Small select example" id="rumus-dicari">
+                        <option selected>Apa yang ingin kamu cari</option>
+                        <option value="I">Arus (I)</option>
+                        <option value="V">Tegangan (V)</option>
+                        <option value="R">Hambatan (R)</option>
+                    </select>
+                    <div class="input-group mb-3 d-none" id="arus-container">
+                        <input id="i" type="number" class="form-control" placeholder="Masukkan besar arus listrik"
+                            aria-label="besar arus listrik" aria-describedby="basic-addon2">
+                        <span class="input-group-text" id="basic-addon2">A</span>
+                    </div>
+                    <div class="input-group mb-3 d-none"  id="besar-tegangan-container">
+                        <input id="v" type="number" class="form-control" placeholder="Masukkan besar tegangan"
+                            aria-label="besar tegangan" aria-describedby="basic-addon3">
+                        <span class="input-group-text" id="basic-addon3">V</span>
+                    </div>
+                    <div class="input-group mb-3 d-none"  id="hambatan-container">
+                        <input id="r" type="number" class="form-control" placeholder="Masukkan besar hambatan"
+                            aria-label="besar hambatan" aria-describedby="basic-addon4">
+                        <span class="input-group-text" id="basic-addon4">Ω</span>
+                    </div>
+                    <button class="btn btn-primary"
+                        style="max-width: 25rem; width:100%;" id="tampilkan-grafik">Tampilkan
+                        Grafik</button>
+                </div>
+
+                <div class="container mt-4">
+                    <h3 class="h3 mt-4 text-center">Hasil Simulasi</h3>
+                    <canvas id="ohmChart" width="400" height="400"></canvas>
+                </div>
+
+            </div>
+        </div>
+    </main>
+    <footer class="text-center min-vh-20 mb-5">
+        <div class="container-fluid d-flex justify-content-center align-items-center">
+            <p>Copyright &copy; <span id="year"></span> SinauSains</p>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+    <script src="jquery.js"></script>
+    <script src="../scripts/hukum_ohm.js"></script>
+</body>
+
+</html>
