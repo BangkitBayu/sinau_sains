@@ -30,10 +30,6 @@
                         <input type="password" class="form-control width-30ch" id="password"
                             placeholder="Masukkan password kamu">
                         <span id="passwordError"></span>
-                        <!-- <div class="container mt-2 d-flex align-items-baseline gap-2 justify-content-start">
-                            <input type="checkbox" name="checkbox" id="checkbox">
-                            <p>Show password</p>
-                        </div> -->
                     </div>
                     <button type="submit" class="btn btn-primary width-30ch">Submit</button>
                 </form>
@@ -72,12 +68,12 @@
             let error = false
 
             if (username.length < 3) {
-                usernameError.text("Username harus lebih dari 3 karakter").addClass("text-danger");
+                usernameError.text("Username minimal 3 karakter").addClass("text-danger");
                 error = true
             }
 
             if (password.length < 8) {
-                passwordError.text("Password harus lebih dari 8 karakter").addClass("text-danger");
+                passwordError.text("Password minimal 8 karakter").addClass("text-danger");
                 error = true
             }
             if (!error) {

@@ -1,130 +1,143 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Simulasi Oksidasi</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-  body {
-    background: #0d0d0d;
-    color: #e0e0e0;
-    font-family: Arial, sans-serif;
-    text-align: center;
-    padding: 20px;
-  }
-  .card {
-    background: #1a1a1a;
-    padding: 20px;
-    border-radius: 14px;
-    max-width: 700px;
-    margin: auto;
-    box-shadow: 0 0 12px rgba(255,255,255,0.05);
-  }
-  input[type="range"] {
-    width: 100%;
-  }
-  select {
-    padding: 8px;
-    border-radius: 6px;
-    background: #222;
-    color: #fff;
-  }
-</style>
-</head>
-<body>
-
-<h2>Simulasi Oksidasi Logam</h2>
-<div class="card">
-
-  <label>Pilih Logam:</label><br>
-  <select id="metalSelect">
-    <option value="Fe">Besi (Fe)</option>
-    <option value="Cu">Tembaga (Cu)</option>
-    <option value="Pt">Platinum (Pt)</option>
-    <option value="Ni">Nikel (Ni)</option>
-  </select>
-  <br><br>
-
-  <label>Laju Oksidasi (k): <span id="kVal">0.10</span></label>
-  <input type="range" id="kSlider" min="0.01" max="0.30" step="0.01" value="0.10" />
-
-  <label>Durasi Waktu (t): <span id="tVal">50</span></label>
-  <input type="range" id="tSlider" min="10" max="200" step="5" value="50" />
-
-  <canvas id="chart" height="120"></canvas>
-</div>
-
-<script>
-// konstanta laju oksidasi default tiap logam (approx)
-const metalRates = {
-  Fe: 0.15,  // oksidasi cepat
-  Cu: 0.05,  // lambat
-  Pt: 0.005, // hampir tidak teroksidasi
-  Ni: 0.08   // sedang
-};
-
-const metalSelect = document.getElementById("metalSelect");
-const kSlider = document.getElementById("kSlider");
-const tSlider = document.getElementById("tSlider");
-const kVal = document.getElementById("kVal");
-const tVal = document.getElementById("tVal");
-
-// chart
-let ctx = document.getElementById("chart").getContext("2d");
-let chart;
-
-function calculateOxidation(k, tmax) {
-  let t = [], ox = [];
-  for (let i = 0; i <= tmax; i++) {
-    t.push(i);
-    ox.push(1 - Math.exp(-k * i)); // model eksponensial
-  }
-  return { t, ox };
-}
-
-function updateChart() {
-  const selected = metalSelect.value;
-  const baseK = metalRates[selected];
-  const k = parseFloat(kSlider.value) * baseK;
-  const tmax = parseInt(tSlider.value);
-
-  kVal.textContent = k.toFixed(3);
-  tVal.textContent = tmax;
-
-  const data = calculateOxidation(k, tmax);
-
-  if (chart) chart.destroy();
-
-  chart = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: data.t,
-      datasets: [{
-        label: "Tingkat Oksidasi",
-        data: data.ox,
-        borderWidth: 3,
-        fill: false
-      }]
-    },
-    options: {
-      scales: {
-        x: { ticks: { color: "#ccc" } },
-        y: { ticks: { color: "#ccc" }, max: 1 }
-      },
-      plugins: {
-        legend: { labels: { color: "#ccc" } }
-      }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulasi Oksidasi</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background: #0d0d0d;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
     }
-  });
-}
 
-metalSelect.addEventListener("change", updateChart);
-kSlider.addEventListener("input", updateChart);
-tSlider.addEventListener("input", updateChart);
+    .card {
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 14px;
+      max-width: 700px;
+      margin: auto;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
+    }
 
-updateChart();
-</script>
+    input[type="range"] {
+      width: 100%;
+    }
+
+    select {
+      padding: 8px;
+      border-radius: 6px;
+      background: #222;
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+  <a href="../mapel/kimia.html" class="text-decoration-none text-primary text-start">&lt;&lt; Kembali</a>
+  <h2>Simulasi Oksidasi Logam</h2>
+  <div class="card">
+
+    <label>Pilih Logam:</label><br>
+    <select id="metalSelect">
+      <option value="Fe">Besi (Fe)</option>
+      <option value="Cu">Tembaga (Cu)</option>
+      <option value="Pt">Platinum (Pt)</option>
+      <option value="Ni">Nikel (Ni)</option>
+    </select>
+    <br><br>
+
+    <label>Laju Oksidasi (k): <span id="kVal">0.10</span></label>
+    <input type="range" id="kSlider" min="0.01" max="0.30" step="0.01" value="0.10" />
+
+    <label>Durasi Waktu (t): <span id="tVal">50</span></label>
+    <input type="range" id="tSlider" min="10" max="200" step="5" value="50" />
+
+    <canvas id="chart" height="120"></canvas>
+  </div>
+
+  <script>
+    // konstanta laju oksidasi default tiap logam (approx)
+    const metalRates = {
+      Fe: 0.15,  // oksidasi cepat
+      Cu: 0.05,  // lambat
+      Pt: 0.005, // hampir tidak teroksidasi
+      Ni: 0.08   // sedang
+    };
+
+    const metalSelect = document.getElementById("metalSelect");
+    const kSlider = document.getElementById("kSlider");
+    const tSlider = document.getElementById("tSlider");
+    const kVal = document.getElementById("kVal");
+    const tVal = document.getElementById("tVal");
+
+    // chart
+    let ctx = document.getElementById("chart").getContext("2d");
+    let chart;
+
+    function calculateOxidation(k, tmax) {
+      let t = [], ox = [];
+      for (let i = 0; i <= tmax; i++) {
+        t.push(i);
+        ox.push(1 - Math.exp(-k * i)); // model eksponensial
+      }
+      return { t, ox };
+    }
+
+    function updateChart() {
+      const selected = metalSelect.value;
+      const baseK = metalRates[selected];
+      const k = parseFloat(kSlider.value) * baseK;
+      const tmax = parseInt(tSlider.value);
+
+      kVal.textContent = k.toFixed(3);
+      tVal.textContent = tmax;
+
+      const data = calculateOxidation(k, tmax);
+
+      if (chart) chart.destroy();
+
+      chart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: data.t,
+          datasets: [{
+            label: "Tingkat Oksidasi",
+            data: data.ox,
+            borderWidth: 3,
+            fill: false
+          }]
+        },
+        options: {
+          scales: {
+            x: { ticks: { color: "#ccc" } },
+            y: { ticks: { color: "#ccc" }, max: 1 }
+          },
+          plugins: {
+            legend: { labels: { color: "#ccc" } }
+          }
+        }
+      });
+    }
+
+    metalSelect.addEventListener("change", updateChart);
+    kSlider.addEventListener("input", updateChart);
+    tSlider.addEventListener("input", updateChart);
+
+    updateChart();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+    crossorigin="anonymous"></script>
+  <script src="jquery.js"></script>
 
 </body>
+
 </html>

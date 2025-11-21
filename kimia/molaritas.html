@@ -1,109 +1,152 @@
 <!doctype html>
 <html lang="id">
+
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Simulasi Molaritas</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-  body{font-family:system-ui;background:#0f172a;color:#e6eef8;padding:18px}
-  .card{background:#0b1220;padding:18px;border-radius:12px;margin-bottom:14px}
-  label{display:block;margin-top:10px;font-size:14px}
-  input[type=range]{width:100%}
-  .val{color:#9fceff;font-weight:bold}
-  .btn{background:#2563eb;border:none;color:white;padding:8px 12px;border-radius:8px;margin-top:10px;cursor:pointer}
-</style>
-</head>
-<body>
-
-<h1>Simulasi Molaritas</h1>
-<div class="card">
-  <label>Jumlah mol zat (n)</label>
-  <input id="mol" type="range" min="0.01" max="5" step="0.01" value="1" />
-  <div>n = <span class="val" id="nVal">1.00</span> mol</div>
-
-  <label>Volume awal (L)</label>
-  <input id="V0" type="range" min="0.1" max="5" step="0.01" value="1" />
-  <div>Volume = <span class="val" id="Vval">1.00</span> L</div>
-
-  <label>Batas volume akhir (L) — grafik molaritas vs volume</label>
-  <input id="Vmax" type="range" min="0.1" max="10" step="0.1" value="5" />
-  <div>Vmax = <span class="val" id="VmaxVal">5.0</span> L</div>
-
-  <label>Langkah ΔV</label>
-  <input id="dV" type="range" min="0.01" max="1" step="0.01" value="0.1" />
-  <div>ΔV = <span class="val" id="dVVal">0.10</span> L</div>
-
-  <button class="btn" id="run">Jalankan Simulasi</button>
-</div>
-
-<div class="card">
-  <canvas id="chart" height="350"></canvas>
-</div>
-
-<script>
-const ctx = document.getElementById('chart');
-let chart = new Chart(ctx, {
-  type: 'line',
-  data: { labels: [], datasets: [
-    { label: 'Molaritas (M)', data: [], borderWidth: 2, tension: 0.25 }
-  ]},
-  options:{
-    plugins:{legend:{labels:{color:'#e6eef8'}}},
-    scales:{
-      x:{title:{display:true,text:'Volume (L)',color:'#cfe6ff'},ticks:{color:'#dfeeff'}},
-      y:{title:{display:true,text:'Molaritas (mol/L)',color:'#cfe6ff'},ticks:{color:'#dfeeff'}}
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simulasi Molaritas</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: system-ui;
+      background: #0f172a;
+      color: #e6eef8;
+      padding: 18px
     }
-  }
-});
 
-// ELEMENTS
-const mol   = document.getElementById('mol');
-const V0    = document.getElementById('V0');
-const Vmax  = document.getElementById('Vmax');
-const dV    = document.getElementById('dV');
+    .card {
+      background: #0b1220;
+      padding: 18px;
+      border-radius: 12px;
+      margin-bottom: 14px
+    }
 
-const nVal = document.getElementById('nVal');
-const Vval = document.getElementById('Vval');
-const VmaxVal = document.getElementById('VmaxVal');
-const dVVal = document.getElementById('dVVal');
+    label {
+      display: block;
+      margin-top: 10px;
+      font-size: 14px
+    }
 
-function updateLabels(){
-  nVal.textContent    = parseFloat(mol.value).toFixed(2);
-  Vval.textContent    = parseFloat(V0.value).toFixed(2);
-  VmaxVal.textContent = parseFloat(Vmax.value).toFixed(1);
-  dVVal.textContent   = parseFloat(dV.value).toFixed(2);
-}
-updateLabels();
+    input[type=range] {
+      width: 100%
+    }
 
-mol.oninput = updateLabels;
-V0.oninput = updateLabels;
-Vmax.oninput = updateLabels;
-dV.oninput = updateLabels;
+    .val {
+      color: #9fceff;
+      font-weight: bold
+    }
 
-// SIMULASI MOLARITAS = n / V
-function simulate(){
-  const n = parseFloat(mol.value);
-  const Vstart = parseFloat(V0.value);
-  const Vend = parseFloat(Vmax.value);
-  const stepV = parseFloat(dV.value);
+    .btn {
+      background: #2563eb;
+      border: none;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-top: 10px;
+      cursor: pointer
+    }
+  </style>
+</head>
 
-  let volumes = [];
-  let molarity = [];
+<body>
+  <a href="../mapel/kimia.html" class="text-decoration-none text-primary">&lt;&lt; Kembali</a>
+  <h1>Simulasi Molaritas</h1>
+  <div class="card">
+    <label>Jumlah mol zat (n)</label>
+    <input id="mol" type="range" min="0.01" max="5" step="0.01" value="1" />
+    <div>n = <span class="val" id="nVal">1.00</span> mol</div>
 
-  for(let V = Vstart; V <= Vend; V += stepV){
-    volumes.push(V.toFixed(2));
-    molarity.push((n / V).toFixed(4));
-  }
+    <label>Volume awal (L)</label>
+    <input id="V0" type="range" min="0.1" max="5" step="0.01" value="1" />
+    <div>Volume = <span class="val" id="Vval">1.00</span> L</div>
 
-  chart.data.labels = volumes;
-  chart.data.datasets[0].data = molarity;
-  chart.update();
-}
+    <label>Batas volume akhir (L) — grafik molaritas vs volume</label>
+    <input id="Vmax" type="range" min="0.1" max="10" step="0.1" value="5" />
+    <div>Vmax = <span class="val" id="VmaxVal">5.0</span> L</div>
 
-document.getElementById('run').addEventListener('click', simulate);
-simulate();
-</script>
+    <label>Langkah ΔV</label>
+    <input id="dV" type="range" min="0.01" max="1" step="0.01" value="0.1" />
+    <div>ΔV = <span class="val" id="dVVal">0.10</span> L</div>
 
+    <button class="btn" id="run">Jalankan Simulasi</button>
+  </div>
+
+  <div class="card">
+    <canvas id="chart" height="350"></canvas>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('chart');
+    let chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [], datasets: [
+          { label: 'Molaritas (M)', data: [], borderWidth: 2, tension: 0.25 }
+        ]
+      },
+      options: {
+        plugins: { legend: { labels: { color: '#e6eef8' } } },
+        scales: {
+          x: { title: { display: true, text: 'Volume (L)', color: '#cfe6ff' }, ticks: { color: '#dfeeff' } },
+          y: { title: { display: true, text: 'Molaritas (mol/L)', color: '#cfe6ff' }, ticks: { color: '#dfeeff' } }
+        }
+      }
+    });
+
+    // ELEMENTS
+    const mol = document.getElementById('mol');
+    const V0 = document.getElementById('V0');
+    const Vmax = document.getElementById('Vmax');
+    const dV = document.getElementById('dV');
+
+    const nVal = document.getElementById('nVal');
+    const Vval = document.getElementById('Vval');
+    const VmaxVal = document.getElementById('VmaxVal');
+    const dVVal = document.getElementById('dVVal');
+
+    function updateLabels() {
+      nVal.textContent = parseFloat(mol.value).toFixed(2);
+      Vval.textContent = parseFloat(V0.value).toFixed(2);
+      VmaxVal.textContent = parseFloat(Vmax.value).toFixed(1);
+      dVVal.textContent = parseFloat(dV.value).toFixed(2);
+    }
+    updateLabels();
+
+    mol.oninput = updateLabels;
+    V0.oninput = updateLabels;
+    Vmax.oninput = updateLabels;
+    dV.oninput = updateLabels;
+
+    // SIMULASI MOLARITAS = n / V
+    function simulate() {
+      const n = parseFloat(mol.value);
+      const Vstart = parseFloat(V0.value);
+      const Vend = parseFloat(Vmax.value);
+      const stepV = parseFloat(dV.value);
+
+      let volumes = [];
+      let molarity = [];
+
+      for (let V = Vstart; V <= Vend; V += stepV) {
+        volumes.push(V.toFixed(2));
+        molarity.push((n / V).toFixed(4));
+      }
+
+      chart.data.labels = volumes;
+      chart.data.datasets[0].data = molarity;
+      chart.update();
+    }
+
+    document.getElementById('run').addEventListener('click', simulate);
+    simulate();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+    crossorigin="anonymous"></script>
+  <script src="jquery.js"></script>
 </body>
+
 </html>
