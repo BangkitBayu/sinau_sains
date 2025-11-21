@@ -1,39 +1,40 @@
 let glbChart;
 
 function resetUI() {
+  
   if (glbChart) glbChart.destroy();
-  calculate.textContent = "";
-
+  
+  document.getElementById("calculate").innerHTML = "";
   const input = document.querySelectorAll("input");
-  const span = document.querySelectorAll("span")
+  const span = document.querySelectorAll("span");
 
   input.forEach((i) => (i.value = "100"));
   span.forEach((s) => (s.textContent = "100"));
 }
 document.getElementById("year").textContent = new Date().getFullYear();
 
-const s = document.getElementById("distance")
-const t = document.getElementById("time")
+const s = document.getElementById("distance");
+const t = document.getElementById("time");
 
-s.addEventListener("input" , () => {
+s.addEventListener("input", () => {
   document.getElementById("distance-value").textContent = s.value;
-})
+});
 
-t.addEventListener("input" , () => {
+t.addEventListener("input", () => {
   document.getElementById("time-value").textContent = t.value;
-})
+});
 
 function generateChart() {
   const s = parseFloat(document.getElementById("distance").value);
   const t = parseFloat(document.getElementById("time").value);
- if (glbChart) glbChart.destroy();
+  if (glbChart) glbChart.destroy();
 
   const calculate = document.getElementById("calculate");
   const Glb = s / t;
 
   const latex = `\\[ V = \\frac{${s}}{${t}} = ${Glb} m/s\\]`;
 
-  calculate.textContent = latex;
+  calculate.innerHTML = latex;
 
   MathJax.typesetPromise();
 

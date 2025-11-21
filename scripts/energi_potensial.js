@@ -2,6 +2,7 @@ let epChart; // menampung instance chart
 
 function resetUI() {
   if (epChart) epChart.destroy();
+  const calculate = document.getElementById("calculate");
   calculate.textContent = "";
 
   const input = document.querySelectorAll("input");
@@ -19,8 +20,11 @@ function generateChart() {
   const Ep = m * g * h;
 
   const latex = `\\[ Ep = ${m} \\times ${g} \\times ${h} = ${Ep} J\\]`;
+  if (epChart) epChart.destroy();
 
-  calculate.textContent = latex;
+  const calculate = document.getElementById("calculate");
+
+  calculate.innerHTML = latex;
 
   MathJax.typesetPromise();
 

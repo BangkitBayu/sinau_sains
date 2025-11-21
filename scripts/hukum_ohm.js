@@ -4,8 +4,14 @@ document.getElementById("year").textContent = new Date().getFullYear();
 
 function resetUI() {
   if (ohmChart) ohmChart.destroy();
+
+  const calculate = document.getElementById("calculate");
+  const calculate2 = document.getElementById("calculate2");
+  const calculate3 = document.getElementById("calculate3");
+
   calculate.textContent = "";
   calculate2.textContent = "";
+  calculate3.textContent = "";
 
   const input = document.querySelectorAll("input");
 
@@ -73,6 +79,8 @@ function hitung() {
     let result = V / R;
 
     const latex = `\\[ I = \\frac{${V}}{${R}} = ${result} A\\]`;
+
+    const calculate = document.getElementById("calculate");
 
     calculate.textContent = latex;
 
