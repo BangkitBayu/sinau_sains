@@ -13,27 +13,28 @@ function resetUI() {
 }
 document.getElementById("year").textContent = new Date().getFullYear();
 
-const s = document.getElementById("distance");
-const t = document.getElementById("time");
+const speedSlider = document.getElementById("distance");
+const timeSlider = document.getElementById("time");
 
-s.addEventListener("input", () => {
-  document.getElementById("distance-value").textContent = s.value;
+speedSlider.addEventListener("input", () => {
+  document.getElementById("distance-value").textContent = speedSlider.value;
+  console.log(speedSlider.value)
 });
 
-t.addEventListener("input", () => {
-  document.getElementById("time-value").textContent = t.value;
+timeSlider.addEventListener("input", () => {
+  document.getElementById("time-value").textContent = timeSlider.value;
 });
 
 function generateChart() {
   const s = parseFloat(document.getElementById("distance").value);
   const t = parseFloat(document.getElementById("time").value);
+  
   if (glbChart) glbChart.destroy();
-
-  const calculate = document.getElementById("calculate");
   const Glb = s / t;
-
-  const latex = `\\[ V = \\frac{${s}}{${t}} = ${Glb} m/s\\]`;
-
+  
+  const latex = `\\[ V = \\frac{${s}}{${t}} = ${Glb.toFixed(2)} m/s\\]`;
+  
+  const calculate = document.getElementById("calculate");
   calculate.innerHTML = latex;
 
   MathJax.typesetPromise();
