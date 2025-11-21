@@ -33,7 +33,7 @@ function generateChart() {
       datasets: [
         {
           label: "V",
-          data: [Glb],
+          data: [Glb.toFixed(2)],
         },
       ],
     },
