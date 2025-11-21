@@ -1,6 +1,5 @@
 let glbChart;
 
-const btnChart = document.getElementById("btn")
 
 function resetUI() {
   if (glbChart) glbChart.destroy();
@@ -50,5 +49,3 @@ function generateChart() {
     },
   });
 }
-
-btnChart.addEventListener('click' , generateChart());
