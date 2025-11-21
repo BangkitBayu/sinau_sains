@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Simulasi Ionisasi</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <style>
+  body{font-family:system-ui;background:#0f172a;color:#e6eef8;padding:18px}
+  .card{background:#0b1220;padding:18px;border-radius:12px;margin-bottom:14px}
+  label{display:block;margin-top:10px;font-size:14px}
+  input[type=range]{width:100%}
+  .val{color:#9fceff;font-weight:bold}
+  .btn{background:#2563eb;border:none;color:white;padding:8px 12px;border-radius:8px;margin-top:10px;cursor:pointer}
+        </style>
+    </head>
+    <body>
+
+<h1>Simulasi Ionisasi (α = derajat ionisasi)</h1>
+<div class="card">
+  <label>Konsentrasi awal (C) mol/L</label>
+  <input id="C" type="range" min="0.01" max="2" step="0.01" value="1" />
+  <div>C = <span class="val" id="Cval">1.00</span> mol/L</div>
+
+  <label>Derajat ionisasi (α)</label>
+  <input id="alpha" type="range" min="0" max="1" step="0.01" value="0.3" />
+  <div>α = <span class="val" id="Aval">0.30</span></div>
+
+  <label>Langkah simulasi waktu (pengamatan ionisasi)</label>
+  <input id="steps" type="range" min="10" max="200" step="1" value="100" />
+  <div>Jumlah titik = <span class="val" id="Sval">100</span></div>
+
+  <button class="btn" id="run">Jalankan Simulasi</button>
+</div>
+
+<div class="card">
+  <canvas id="chart" height="350"></canvas>
+</div>
+
+<script>
+// Chart init
+const ctx = document.getElementById('chart');
+let chart = new Chart(ctx, {
+  type: 'line',
+  data: { labels: [], datasets: [
+    { label: 'Konsentrasi ion terbentuk (mol/L)', data: [], borderWidth: 2, tension:0.25 }
+  ]},
+  options:{
+    plugins:{legend:{labels:{color:'#e6eef8'}}},
+    scales:{
+      x:{title:{display:true,text:'Waktu (arb. unit)',color:'#cfe6ff'},ticks:{color:'#dfeeff'}},
+      y:{title:{display:true,text:'Konsentrasi Ion (mol/L)',color:'#cfe6ff'},ticks:{color:'#dfeeff'}}
+    }
+  }
+});
+
+// Elements
+const C = document.getElementById('C');
+const Cval = document.getElementById('Cval');
+const A = document.getElementById('alpha');
+const Aval = document.getElementById('Aval');
+const S = document.getElementById('steps');
+const Sval = document.getElementById('Sval');
+
+function updateLabels(){
+  Cval.textContent = parseFloat(C.value).toFixed(2);
+  Aval.textContent = parseFloat(A.value).toFixed(2);
+  Sval.textContent = S.value;
+}
+updateLabels();
+
+C.oninput = updateLabels;
+A.oninput = updateLabels;
+S.oninput = updateLabels;
+
+// Ionization Model: Instant equilibrium visualization
+// Ion concentration = α * C
+// Additional curve: gradual approach over time using exp relaxation
+
+function simulate(){
+  const C0 = parseFloat(C.value);
+  const alpha = parseFloat(A.value);
+  const steps = parseInt(S.value);
+
+  let t = [];
+  let ion = [];
+
+  // target concentration at equilibrium
+  const Ceq = C0 * alpha;
+
+  for(let i=0; i<steps; i++){
+    const time = i / steps * 5;
+    t.push(time.toFixed(2));
+
+    // model peluruhan eksponensial mendekati Ceq
+    const Ct = Ceq * (1 - Math.exp(-2 * time));
+    ion.push(Ct.toFixed(4));
+  }
+
+  chart.data.labels = t;
+  chart.data.datasets[0].data = ion;
+  chart.update();
+}
+
+document.getElementById('run').addEventListener('click', simulate);
+simulate();
+</script>
+
+</body>
+</html>

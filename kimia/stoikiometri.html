@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Simulasi Stoikiometri</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body {
+    background: #0d0d0d;
+    color: #e0e0e0;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    text-align: center;
+  }
+  .card {
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 14px;
+    max-width: 900px;
+    margin: auto;
+    box-shadow: 0 0 12px rgba(255,255,255,0.05);
+  }
+  input[type='range'], select {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  select {
+    padding: 8px;
+    border-radius: 6px;
+    background: #222;
+    color: #fff;
+  }
+  .valueBox {
+    color: #8be4ff;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+
+<h2>Simulasi Stoikiometri</h2>
+<div class="card">
+
+  <h3>Pilih Reaksi</h3>
+  <select id="reactionSelect">
+    <option value="H2_O2">2 H₂ + O₂ → 2 H₂O</option>
+    <option value="N2_H2">N₂ + 3 H₂ → 2 NH₃</option>
+    <option value="Fe_O2">4 Fe + 3 O₂ → 2 Fe₂O₃</option>
+  </select>
+
+  <h3>Jumlah Mol Reaktan</h3>
+  <label>Reaktan A: <span class="valueBox" id="AVal">2</span> mol</label>
+  <input type="range" id="ASlider" min="1" max="20" step="1" value="2" />
+
+  <label>Reaktan B: <span class="valueBox" id="BVal">2</span> mol</label>
+  <input type="range" id="BSlider" min="1" max="20" step="1" value="2" />
+
+  <h3>Hasil Perhitungan</h3>
+  <p>Reaktan pembatas: <span class="valueBox" id="limitText">-</span></p>
+  <p>Jumlah produk terbentuk: <span class="valueBox" id="productText">0</span> mol</p>
+
+  <canvas id="chart" height="120"></canvas>
+</div>
+
+<script>
+const reactionSelect = document.getElementById('reactionSelect');
+const ASlider = document.getElementById('ASlider');
+const BSlider = document.getElementById('BSlider');
+const AVal = document.getElementById('AVal');
+const BVal = document.getElementById('BVal');
+const limitText = document.getElementById('limitText');
+const productText = document.getElementById('productText');
+
+let ctx = document.getElementById('chart').getContext('2d');
+let chart;
+
+// data reaksi: koefisien A, B, dan produk
+const reactions = {
+  H2_O2: { A: 2, B: 1, P: 2 },
+  N2_H2: { A: 1, B: 3, P: 2 },
+  Fe_O2: { A: 4, B: 3, P: 2 }
+};
+
+function update() {
+  const r = reactions[reactionSelect.value];
+  const nA = parseFloat(ASlider.value);
+  const nB = parseFloat(BSlider.value);
+
+  AVal.textContent = nA;
+  BVal.textContent = nB;
+
+  const ratioA = nA / r.A;
+  const ratioB = nB / r.B;
+  let limiting, product;
+
+  if (ratioA < ratioB) {
+    limiting = 'Reaktan A';
+    product = ratioA * r.P;
+  } else {
+    limiting = 'Reaktan B';
+    product = ratioB * r.P;
+  }
+
+  limitText.textContent = limiting;
+  productText.textContent = product.toFixed(2);
+
+  let steps = 20;
+  let x = [], y = [];
+  for (let i = 0; i <= steps; i++) {
+    let scale = i / steps;
+    let nA_used = scale * nA;
+    let nB_used = scale * nB;
+
+    let ra = nA_used / r.A;
+    let rb = nB_used / r.B;
+    let prod = Math.min(ra, rb) * r.P;
+
+    x.push(i);
+    y.push(prod);
+  }
+
+  if (chart) chart.destroy();
+
+  chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: x,
+      datasets: [{
+        label: 'Pembentukan Produk (mol)',
+        data: y,
+        borderWidth: 3,
+        fill: false
+      }]
+    },
+    options: {
+      scales: {
+        x: { ticks: { color: '#ddd' } },
+        y: { ticks: { color: '#ddd' } }
+      },
+      plugins: {
+        legend: { labels: { color: '#ddd' } }
+      }
+    }
+  });
+}
+
+reactionSelect.addEventListener('change', update);
+ASlider.addEventListener('input', update);
+BSlider.addEventListener('input', update);
+
+update();
+</script>
+
+</body>
+</html>

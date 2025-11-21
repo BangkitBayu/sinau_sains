@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Simulasi Oksidasi - Chart.js</title>
+  <style>
+    :root{--gap:12px;--card-bg:#ffffff;--bg:#f4f7fb;--accent:#4f46e5}
+    body{font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:var(--bg);color:#111}
+    .container{max-width:980px;margin:36px auto;padding:20px}
+    .card{background:var(--card-bg);border-radius:12px;padding:18px;box-shadow:0 6px 18px rgba(15,23,42,0.06)}
+    h1{margin:0 0 8px;font-size:20px}
+    p.lead{margin:0 0 16px;color:#374151}
+    .controls{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);margin-top:12px}
+    .control{display:flex;flex-direction:column;gap:6px}
+    label{font-size:13px;color:#374151}
+    input[type=range]{width:100%}
+    .row{display:flex;gap:var(--gap)}
+    .btn{padding:8px 12px;border-radius:8px;border:0;cursor:pointer}
+    .btn.primary{background:var(--accent);color:white}
+    .btn.ghost{background:transparent;border:1px solid #e6e9f2}
+    .footer{display:flex;gap:12px;align-items:center;margin-top:12px}
+    .stat{background:#f8fafc;padding:10px;border-radius:8px;font-size:13px}
+    canvas{max-height:420px}
+    pre{background:#0f172a;color:#e6eef8;padding:12px;border-radius:8px;overflow:auto}
+    @media (max-width:720px){.controls{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>Simulasi Oksidasi Sederhana (reaksi orde-1)</h1>
+      <p class="lead">Contoh ini memodelkan oksidasi sederhana A → Ox dengan kinetika orde pertama: <code>d[A]/dt = -k [A]</code>. Ubah parameter lalu tekan <strong>Mulai</strong>.</p>
+
+      <div class="controls">
+        <div class="control">
+          <label>Konstanta laju k (1/s): <span id="kVal">0.05</span></label>
+          <input id="k" type="range" min="0.001" max="1" step="0.001" value="0.05">
+        </div>
+
+        <div class="control">
+          <label>Konsentrasi awal [A]₀ (mol/L): <span id="a0Val">1.00</span></label>
+          <input id="a0" type="range" min="0.1" max="2" step="0.01" value="1">
+        </div>
+
+        <div class="control">
+          <label>Durasi simulasi (s): <span id="tMaxVal">200</span></label>
+          <input id="tMax" type="range" min="10" max="2000" step="10" value="200">
+        </div>
+
+        <div class="control">
+          <label>Δt (s) (time step): <span id="dtVal">1</span></label>
+          <input id="dt" type="range" min="0.01" max="10" step="0.01" value="1">
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:14px;align-items:center">
+        <button id="startBtn" class="btn primary">Mulai</button>
+        <button id="pauseBtn" class="btn ghost">Jeda</button>
+        <button id="resetBtn" class="btn ghost">Reset</button>
+
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+          <div class="stat">[A] sekarang: <strong id="aNow">1.00</strong> mol/L</div>
+          <div class="stat">% teroksidasi: <strong id="oxidPct">0%</strong></div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px">
+        <canvas id="chart"></canvas>
+      </div>
+
+      <div style="margin-top:14px;display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start">
+        <div style="flex:1;min-width:300px">
+          <h3>Penjelasan singkat</h3>
+          <p>Untuk reaksi orde pertama A → produk, solusi analitiknya adalah <code>[A](t) = [A]₀ · e<sup>-k t</sup></code>. Di sisi numerik kita juga menghitung iteratif menggunakan metode Euler eksplisit untuk menunjukkan simulasi diskret (berguna bila ingin memperluas ke reaksi bertingkat).</p>
+        </div>
+
+        <div style="flex:1;min-width:240px">
+          <h3>Persamaan</h3>
+          <pre>d[A]/dt = -k [A]
+[A](t) = [A]0 · e^{-k t}
+%</pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Utilities
+    const $ = id => document.getElementById(id);
+
+    // Elements
+    const kEl = $('k'), a0El = $('a0'), tMaxEl = $('tMax'), dtEl = $('dt');
+    const kVal = $('kVal'), a0Val = $('a0Val'), tMaxVal = $('tMaxVal'), dtVal = $('dtVal');
+    const startBtn = $('startBtn'), pauseBtn = $('pauseBtn'), resetBtn = $('resetBtn');
+    const aNowEl = $('aNow'), oxidPctEl = $('oxidPct');
+
+    // Default params
+    let params = {
+      k: parseFloat(kEl.value),
+      a0: parseFloat(a0El.value),
+      tMax: parseFloat(tMaxEl.value),
+      dt: parseFloat(dtEl.value)
+    };
+
+    // Update UI labels
+    function updateLabels(){
+      kVal.textContent = Number(params.k).toFixed(3);
+      a0Val.textContent = Number(params.a0).toFixed(2);
+      tMaxVal.textContent = Number(params.tMax).toFixed(0);
+      dtVal.textContent = Number(params.dt).toFixed(2);
+    }
+
+    // Listen to inputs
+    [kEl,a0El,tMaxEl,dtEl].forEach(el => el.addEventListener('input', ()=>{
+      params.k = parseFloat(kEl.value);
+      params.a0 = parseFloat(a0El.value);
+      params.tMax = parseFloat(tMaxEl.value);
+      params.dt = parseFloat(dtEl.value);
+      updateLabels();
+    }));
+
+    updateLabels();
+
+    // Prepare Chart.js
+    const ctx = document.getElementById('chart').getContext('2d');
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: '[A] (mol/L)',
+          data: [],
+          tension: 0.2,
+          fill: false,
+          pointRadius: 0,
+        },{
+          label: '% teroksidasi',
+          data: [],
+          tension: 0.2,
+          fill: false,
+          pointRadius: 0,
+          yAxisID: 'y1'
+        }]
+      },
+      options: {
+        responsive: true,
+        interaction: {mode: 'index', intersect: false},
+        plugins: {legend:{position:'top'}},
+        scales: {
+          y: {type:'linear', position:'left', title:{display:true,text:'[A] (mol/L)'}},
+          y1: {type:'linear', position:'right', title:{display:true,text:'% teroksidasi'}, grid:{drawOnChartArea:false}, ticks:{callback: v=>v+"%"}},
+          x: {title:{display:true,text:'Waktu (s)'}}
+        }
+      }
+    });
+
+    // Simulation state
+    let sim = {t:0, a:params.a0, running:false, timer:null};
+
+    function computeAnalytic(t){
+      return params.a0 * Math.exp(-params.k * t);
+    }
+
+    function stepEuler(a, dt){
+      // Euler eksplisit: a_next = a + da/dt * dt
+      const da = -params.k * a;
+      return a + da * dt;
+    }
+
+    function resetSim(){
+      sim.t = 0;
+      sim.a = params.a0;
+      sim.running = false;
+      if(sim.timer) { clearInterval(sim.timer); sim.timer = null; }
+      // reset chart data
+      chart.data.labels = [0];
+      chart.data.datasets[0].data = [params.a0];
+      chart.data.datasets[1].data = [0];
+      chart.update();
+      updateStats();
+    }
+
+    function updateStats(){
+      aNowEl.textContent = Number(sim.a).toFixed(3);
+      const oxidPct = (1 - sim.a / params.a0) * 100;
+      oxidPctEl.textContent = Number(oxidPct).toFixed(2) + '%';
+    }
+
+    function runStep(){
+      // numeric step
+      const dt = params.dt;
+      sim.t += dt;
+      // use Euler (explicit) for demonstration; user can compare with analytic
+      sim.a = stepEuler(sim.a, dt);
+      // don't go below zero
+      if(sim.a < 0) sim.a = 0;
+
+      // update chart
+      chart.data.labels.push(Number(sim.t).toFixed(2));
+      chart.data.datasets[0].data.push(Number(sim.a.toFixed(6)));
+      chart.data.datasets[1].data.push(Number(((1 - sim.a/params.a0)*100).toFixed(4)));
+      // keep dataset length manageable
+      if(chart.data.labels.length > 5000){
+        chart.data.labels.shift();
+        chart.data.datasets.forEach(ds=>ds.data.shift());
+      }
+      chart.update('none');
+      updateStats();
+
+      if(sim.t >= params.tMax || sim.a <= 1e-9){
+        // stop when finished
+        stopSim();
+      }
+    }
+
+    function startSim(){
+      if(sim.running) return;
+      // initialize if starting from 0
+      if(sim.t === 0 && chart.data.labels.length === 1){ /* already initialized by reset */ }
+      sim.running = true;
+      // use setInterval to step; interval synced to dt but we'll clamp to avoid too small intervals
+      const intervalMs = Math.max(10, params.dt * 1000);
+      sim.timer = setInterval(()=>{
+        // keep reading latest params so user can change on the fly
+        params.k = parseFloat(kEl.value);
+        params.dt = parseFloat(dtEl.value);
+        params.a0 = parseFloat(a0El.value);
+        params.tMax = parseFloat(tMaxEl.value);
+        runStep();
+      }, intervalMs);
+    }
+
+    function stopSim(){
+      if(sim.timer) clearInterval(sim.timer);
+      sim.running = false;
+      sim.timer = null;
+    }
+
+    // Button handlers
+    startBtn.addEventListener('click', ()=>{
+      // if starting fresh (t==0 but chart empty) reinitialize analytic baseline for comparison
+      if(chart.data.labels.length <= 1){
+        // create analytic baseline dataset (optional)
+        const labels = [];
+        const dataAnalytic = [];
+        const dataOx = [];
+        for(let t=0; t<=params.tMax; t+=params.dt){
+          labels.push(Number(t).toFixed(2));
+          dataAnalytic.push(Number(computeAnalytic(t).toFixed(6)));
+          dataOx.push(Number(((1 - computeAnalytic(t)/params.a0)*100).toFixed(4)));
+        }
+        // replace chart with analytic lines first
+        chart.data.labels = labels;
+        chart.data.datasets[0].data = dataAnalytic;
+        chart.data.datasets[1].data = dataOx;
+        chart.update();
+        // then reset numeric sim to analytic start
+        sim.t = 0;
+        sim.a = params.a0;
+      }
+      startSim();
+    });
+
+    pauseBtn.addEventListener('click', ()=>{
+      if(sim.running) stopSim(); else startSim();
+    });
+
+    resetBtn.addEventListener('click', ()=>{
+      // update params from inputs
+      params.k = parseFloat(kEl.value);
+      params.dt = parseFloat(dtEl.value);
+      params.a0 = parseFloat(a0El.value);
+      params.tMax = parseFloat(tMaxEl.value);
+      updateLabels();
+      // reset chart to initial point
+      chart.data.labels = [0];
+      chart.data.datasets[0].data = [params.a0];
+      chart.data.datasets[1].data = [0];
+      chart.update();
+      resetSim();
+    });
+
+    // initialize
+    resetSim();
+
+    // Helpful: update analytic preview when user stops changing slider (simple debounce)
+    let previewTimer = null;
+    [kEl,a0El,tMaxEl,dtEl].forEach(el=>el.addEventListener('change', ()=>{
+      // create analytic preview
+      params.k = parseFloat(kEl.value);
+      params.dt = parseFloat(dtEl.value);
+      params.a0 = parseFloat(a0El.value);
+      params.tMax = parseFloat(tMaxEl.value);
+      updateLabels();
+
+      const labels = [];
+      const dataAnalytic = [];
+      const dataOx = [];
+      for(let t=0; t<=params.tMax; t+=params.dt){
+        labels.push(Number(t).toFixed(2));
+        dataAnalytic.push(Number(computeAnalytic(t).toFixed(6)));
+        dataOx.push(Number(((1 - computeAnalytic(t)/params.a0)*100).toFixed(4)));
+        if(labels.length>2000) break;
+      }
+      chart.data.labels = labels;
+      chart.data.datasets[0].data = dataAnalytic;
+      chart.data.datasets[1].data = dataOx;
+      chart.update();
+      resetSim();
+    }));
+
+    // make chart show analytic baseline on load
+    document.addEventListener('DOMContentLoaded', ()=>{
+      const labels = [];
+      const dataAnalytic = [];
+      const dataOx = [];
+      for(let t=0; t<=params.tMax; t+=params.dt){
+        labels.push(Number(t).toFixed(2));
+        dataAnalytic.push(Number(computeAnalytic(t).toFixed(6)));
+        dataOx.push(Number(((1 - computeAnalytic(t)/params.a0)*100).toFixed(4)));
+        if(labels.length>2000) break;
+      }
+      chart.data.labels = labels;
+      chart.data.datasets[0].data = dataAnalytic;
+      chart.data.datasets[1].data = dataOx;
+      chart.update();
+      resetSim();
+    });
+
+  </script>
+</body>
+</html>
